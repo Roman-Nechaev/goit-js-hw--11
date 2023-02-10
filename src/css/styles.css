@@ -282,14 +282,16 @@ p {
 }
 
 .page-load-status {
-  display: none;
+  /* display: none; */
 
   padding-top: 20px;
-  border-top: 1px solid #DDD;
+  /* border-top: 1px solid #DDD; */
   text-align: center;
   color: #777;
 }
-
+.page-load-status.is-hidden {
+  display: none;
+}
 .end-content.is-hidden {
   display: none;
 

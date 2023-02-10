@@ -23,7 +23,7 @@ export default class PixabayApiServis {
 
     try {
       const response = await axios.get(BASE_URL, options);
-      console.log(response);
+
       const gatherData = await response.data;
       //   console.log(gatherData);
       return gatherData;
