@@ -12,9 +12,293 @@ body {
   line-height: 1.5;
 }
 
-#search-box {
-  font: inherit;
-  padding: 8px;
-  max-width: 320px;
-  margin-bottom: 16px;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #fafafa;
+  color: #212121;
+  line-height: 1.5;
+
+}
+
+
+ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+img {
+  display: block;
+
+  width: 100%;
+  height: auto;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+
+.button {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+
+}
+
+.button.is-hidden {
+  display: none;
+}
+
+.button>.spinner.is-hidden {
+  display: none;
+}
+
+.btn-search {
+  margin-left: 10px;
+
+  border-radius: 20px;
+  color: #ffffff;
+  background-color: #130ccd;
+
+}
+
+.search-input {
+  border-radius: 10px;
+  padding: 8;
+}
+
+/* /////////////// */
+.search-fixed {
+  position: fixed;
+  width: 100%;
+  right: 0;
+  left: 0;
+
+  z-index: 998;
+
+}
+
+.search-form {
+
+  display: flex;
+  justify-content: center;
+
+  padding-top: 25px;
+  padding-bottom: 25px;
+  background-color: rgb(64, 75, 95);
+
+
+}
+
+.pagination-choices {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+  right: 0;
+  left: 0;
+
+}
+
+.pagination-choices_btn {
+  padding-left: 10px;
+
+
+}
+
+.box-section {
+  padding: 0 15px;
+  padding-top: 64px;
+  /* min-width: 1200px; */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.container {
+
+  margin-top: 50px;
+  padding-bottom: 25px;
+}
+
+.gallery {
+
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  margin-top: -20px;
+  margin-left: -20px;
+
+}
+
+.photo-card {
+  flex-basis: calc(100% / 4 - 20px);
+  margin: 20px 0 0 20px;
+
+
+
+  box-shadow: 0 2px 1px -1px #0003, 0 1px 1px #00000024, 0 1px 3px #0000001f;
+
+}
+
+
+.thumb-card {
+  height: 250px;
+  width: 300px;
+
+  border-radius: 4px;
+}
+
+
+.img-card {
+  object-fit: cover;
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+
+.info {
+  display: flex;
+  justify-content: space-around;
+
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: center;
+
+  font-size: 16px;
+  line-height: 1.87;
+
+}
+
+.quantity {
+  display: flex;
+  justify-content: center;
+  color: rgb(14, 38, 255);
+
+}
+
+
+
+
+
+
+
+/* ======================== */
+
+.loader-ellips {
+  font-size: 20px;
+  /* change size here */
+  position: relative;
+  width: 4em;
+  height: 1em;
+  margin: 10px auto;
+}
+
+.loader-ellips__dot {
+  display: block;
+  width: 1em;
+  height: 1em;
+  border-radius: 0.5em;
+  background: #555;
+  /* change color here */
+  position: absolute;
+  animation-duration: 0.5s;
+  animation-timing-function: ease;
+  animation-iteration-count: infinite;
+}
+
+.loader-ellips__dot:nth-child(1),
+.loader-ellips__dot:nth-child(2) {
+  left: 0;
+}
+
+.loader-ellips__dot:nth-child(3) {
+  left: 1.5em;
+}
+
+.loader-ellips__dot:nth-child(4) {
+  left: 3em;
+}
+
+@keyframes reveal {
+  from {
+    transform: scale(0.001);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes slide {
+  to {
+    transform: translateX(1.5em)
+  }
+}
+
+.loader-ellips__dot:nth-child(1) {
+  animation-name: reveal;
+}
+
+.loader-ellips__dot:nth-child(2),
+.loader-ellips__dot:nth-child(3) {
+  animation-name: slide;
+}
+
+.loader-ellips__dot:nth-child(4) {
+  animation-name: reveal;
+  animation-direction: reverse;
+}
+
+.pagination-choices.is-hidden {
+  display: none;
+}
+
+.page-load-status {
+  display: none;
+
+  padding-top: 20px;
+  border-top: 1px solid #DDD;
+  text-align: center;
+  color: #777;
+}
+
+.end-content.is-hidden {
+  display: none;
+
+}
+
+.end-content {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-top: 1px solid #DDD;
+  text-align: center;
+  color: #777;
 }
