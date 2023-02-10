@@ -1,14 +1,17 @@
 import './css/styles.css';
 
-import { fetchPixabayApi } from './API/service-pixabay';
+import PixabayApiServis from './API/service-pixabay';
 import galleryTemplateMarkup from './template/gallery-cards.hbs';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const searchFormRef = document.querySelector('#search-form');
 const galleryRef = document.querySelector('.gallery');
+const sentinelRef = document.querySelector('#sentinel');
 
 searchFormRef.addEventListener('submit', onSearchForm);
+
+const pixabayApiServis = new PixabayApiServis();
 
 function onSearchForm(e) {
   e.preventDefault();
@@ -16,25 +19,42 @@ function onSearchForm(e) {
   if (value === '') {
     return;
   }
+  pixabayApiServis.resetPage();
+  requestToServer(value);
+}
+
+async function requestToServer(searchQuery) {
   clearGalleryInterface();
-  NewRequestToServer(value);
+  pixabayApiServis.query = searchQuery;
+
+  const response = await pixabayApiServis.fetchPixabayApi();
+  const imagesDateHits = response.hits;
+  console.log(imagesDateHits);
+  renderTemplate(imagesDateHits);
 }
 
-async function NewRequestToServer(searchQuery) {
-  try {
-    const imagesDate = await fetchPixabayApi(searchQuery);
-    const imagesDateHits = await imagesDate.hits;
+// //! ==================================== ВЫНЕСИ В ОТДЕЛЬНЫЙ МОДУЛЬ!!!!
+// async function onEntry(entries) {
+//   console.log(entries);
+//   const response = await pixabayApiServis.fetchPixabayApi();
+//   const imagesDateHits = response.hits;
+//   entries.forEach(entry => {
+//     if (entry.isIntersecting && pixabayApiServis.query !== '') {
+//       renderTemplate(imagesDateHits);
+//       pixabayApiServis.incrementPage();
+//     }
+//   });
+// }
 
-    renderTemplate(imagesDateHits);
-    return imagesDate;
-  } catch (error) {
-    console.log(error.message);
-  }
-}
+// const observer = new IntersectionObserver(onEntry, {
+//   rootMargin: '150px',
+// });
+
+// observer.observe(sentinelRef);
+// //! ==================================== ВЫНЕСИ В ОТДЕЛЬНЫЙ МОДУЛЬ!!!!
 
 function renderTemplate(e) {
   galleryRef.insertAdjacentHTML('beforeend', galleryTemplateMarkup(e));
-
   lightbox.refresh();
 }
 
