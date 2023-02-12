@@ -12,6 +12,7 @@ const searchFormRef = document.querySelector('#search-form');
 const galleryRef = document.querySelector('.gallery');
 const sentinelRef = document.querySelector('#sentinel');
 const pageLoadStatusRef = document.querySelector('.page-load-status');
+const endOfContent = document.querySelector('.end-content');
 
 searchFormRef.addEventListener('submit', onSearchForm);
 
@@ -24,24 +25,31 @@ const loadMoreBtn = new LoadMoreBtn({
 
 loadMoreBtn.refs.button.addEventListener('click', onLoadMoreBtn);
 pageLoadStatusRef.classList.add('is-hidden');
+endOfContent.classList.add('is-hidden');
+
+let isFlagForQuantity = false;
+let isFlagCheckScroll;
 
 function onSearchForm(e) {
   e.preventDefault();
   const { value } = e.target.searchQuery;
 
   if (value === '') {
-    Notify.info('Поле поиска не должно быть пустым!!!');
+    Notify.info('The search field should not be empty!');
     return;
   }
+  paginationChoicesRef.classList.add('is-hidden');
 
   loadMoreBtn.hide();
   pageLoadStatusRef.classList.add('is-hidden');
+  endOfContent.classList.add('is-hidden');
 
   clearGalleryInterface();
   pixabayApiServis.resetPage();
   pixabayApiServis.query = value;
   requestToServer();
   loadMoreBtn.enable();
+  isFlagForQuantity = true;
 }
 
 async function requestToServer() {
@@ -50,18 +58,33 @@ async function requestToServer() {
   const imageQuantity = await response.totalHits;
 
   if (!imageQuantity) {
+    pageLoadStatusRef.classList.add('is-hidden');
     loadMoreBtn.hide();
+
     Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
     return;
   } else if (imagesDateHits.length <= 0) {
-    console.log('На этом все');
     loadMoreBtn.hide();
+    pageLoadStatusRef.classList.add('is-hidden');
+    endOfContent.classList.remove('is-hidden');
     return;
   }
+
+  if (isFlagForQuantity) {
+    Notify.info(` Hooray! We found ${imageQuantity} images.`);
+  }
+
   renderTemplate(imagesDateHits);
-  loadMoreBtn.show();
+
+  if (isFlagCheckScroll === 'scroll-check') {
+    testUseObserver();
+  } else {
+    loadMoreBtn.show();
+  }
+
+  isFlagForQuantity = false;
 
   return;
 }
@@ -71,6 +94,7 @@ function onLoadMoreBtn() {
   requestToServer();
   loadMoreBtn.disable();
 }
+
 // //! ==================================== ВЫНЕСИ В ОТДЕЛЬНЫЙ МОДУЛЬ!!!!? скролл пагинация
 function onEntry(entries) {
   entries.forEach(entry => {
@@ -83,11 +107,14 @@ function onEntry(entries) {
   });
 }
 
-const observer = new IntersectionObserver(onEntry, {
-  rootMargin: '150px',
-});
+function testUseObserver(params) {
+  const observer = new IntersectionObserver(onEntry, {
+    rootMargin: '150px',
+  });
 
-// observer.observe(sentinelRef);
+  observer.observe(sentinelRef);
+}
+
 // //! ==================================== ВЫНЕСИ В ОТДЕЛЬНЫЙ МОДУЛЬ!!!!
 
 function renderTemplate(e) {
@@ -106,16 +133,13 @@ var lightbox = new SimpleLightbox('.gallery a', {
 
 //^ =============================== переключатель пагинации ПОДУМАЙ!!!
 const paginationChoicesRef = document.querySelector('.pagination-choices');
-// paginationChoicesRef.addEventListener('input', onPaginationChoices);
-let checkTest;
+
+paginationChoicesRef.addEventListener('input', onPaginationChoices);
+
 function onPaginationChoices(e) {
   const { value } = e.target;
-  console.log(value);
-  if (value === 'scroll-check') {
-    return (checkTest = value);
-  } else {
-    return (checkTest = value);
-  }
+
+  return (isFlagCheckScroll = value);
 }
 
 //^ =============================== переключатель пагинации ПОДУМАЙ!!!
