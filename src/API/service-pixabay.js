@@ -17,15 +17,14 @@ export default class PixabayApiServis {
         orientation: 'horizontal',
         safesearch: true,
         page: this.page,
-        per_page: 10,
+        per_page: 40,
       },
     };
 
     try {
       const response = await axios.get(BASE_URL, options);
-
       const gatherData = await response.data;
-      //   console.log(gatherData);
+
       return gatherData;
     } catch (error) {
       console.error(error.message);

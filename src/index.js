@@ -13,8 +13,7 @@ const galleryRef = document.querySelector('.gallery');
 const sentinelRef = document.querySelector('#sentinel');
 const pageLoadStatusRef = document.querySelector('.page-load-status');
 const endOfContent = document.querySelector('.end-content');
-
-searchFormRef.addEventListener('submit', onSearchForm);
+const paginationChoicesRef = document.querySelector('.pagination-choices');
 
 const pixabayApiServis = new PixabayApiServis();
 
@@ -23,6 +22,8 @@ const loadMoreBtn = new LoadMoreBtn({
   hidden: true,
 });
 
+paginationChoicesRef.addEventListener('input', onPaginationChoices);
+searchFormRef.addEventListener('submit', onSearchForm);
 loadMoreBtn.refs.button.addEventListener('click', onLoadMoreBtn);
 pageLoadStatusRef.classList.add('is-hidden');
 endOfContent.classList.add('is-hidden');
@@ -44,9 +45,11 @@ function onSearchForm(e) {
   pageLoadStatusRef.classList.add('is-hidden');
   endOfContent.classList.add('is-hidden');
 
-  clearGalleryInterface();
   pixabayApiServis.resetPage();
+  clearGalleryInterface();
+
   pixabayApiServis.query = value;
+
   requestToServer();
   loadMoreBtn.enable();
   isFlagForQuantity = true;
@@ -76,17 +79,13 @@ async function requestToServer() {
     Notify.info(` Hooray! We found ${imageQuantity} images.`);
   }
 
-  renderTemplate(imagesDateHits);
-
   if (isFlagCheckScroll === 'scroll-check') {
-    testUseObserver();
+    observer.observe(sentinelRef);
   } else {
     loadMoreBtn.show();
   }
-
+  renderTemplate(imagesDateHits);
   isFlagForQuantity = false;
-
-  return;
 }
 
 function onLoadMoreBtn() {
@@ -95,35 +94,13 @@ function onLoadMoreBtn() {
   loadMoreBtn.disable();
 }
 
-// //! ==================================== ВЫНЕСИ В ОТДЕЛЬНЫЙ МОДУЛЬ!!!!? скролл пагинация
-function onEntry(entries) {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && pixabayApiServis.query !== '') {
-      pageLoadStatusRef.classList.remove('is-hidden');
-
-      pixabayApiServis.incrementPage();
-      requestToServer();
-    }
-  });
-}
-
-function testUseObserver(params) {
-  const observer = new IntersectionObserver(onEntry, {
-    rootMargin: '150px',
-  });
-
-  observer.observe(sentinelRef);
-}
-
-// //! ==================================== ВЫНЕСИ В ОТДЕЛЬНЫЙ МОДУЛЬ!!!!
-
 function renderTemplate(e) {
   galleryRef.insertAdjacentHTML('beforeend', galleryTemplateMarkup(e));
   lightbox.refresh();
   loadMoreBtn.enable();
 }
 
-function clearGalleryInterface(e) {
+function clearGalleryInterface() {
   galleryRef.innerHTML = '';
 }
 
@@ -131,15 +108,22 @@ var lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
 });
 
-//^ =============================== переключатель пагинации ПОДУМАЙ!!!
-const paginationChoicesRef = document.querySelector('.pagination-choices');
-
-paginationChoicesRef.addEventListener('input', onPaginationChoices);
-
 function onPaginationChoices(e) {
   const { value } = e.target;
 
   return (isFlagCheckScroll = value);
 }
 
-//^ =============================== переключатель пагинации ПОДУМАЙ!!!
+function onEntry([entries]) {
+  if (entries.isIntersecting) {
+    pageLoadStatusRef.classList.remove('is-hidden');
+
+    pixabayApiServis.incrementPage();
+    requestToServer();
+  }
+}
+
+const observer = new IntersectionObserver(onEntry, {
+  rootMargin: '150px',
+  threshold: 1,
+});
