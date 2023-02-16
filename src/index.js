@@ -14,6 +14,10 @@ const sentinelRef = document.querySelector('#sentinel');
 const pageLoadStatusRef = document.querySelector('.page-load-status');
 const endOfContent = document.querySelector('.end-content');
 const paginationChoicesRef = document.querySelector('.pagination-choices');
+const paginContainerRef = document.getElementById('pagination');
+
+import Pagination from 'tui-pagination';
+import 'tui-pagination/dist/tui-pagination.css';
 
 const pixabayApiServis = new PixabayApiServis();
 
@@ -44,6 +48,7 @@ function onSearchForm(e) {
   loadMoreBtn.hide();
   pageLoadStatusRef.classList.add('is-hidden');
   endOfContent.classList.add('is-hidden');
+  paginContainerRef.classList.add('is-hidden');
 
   pixabayApiServis.resetPage();
   clearGalleryInterface();
@@ -77,15 +82,22 @@ async function requestToServer() {
 
   if (isFlagForQuantity) {
     Notify.info(` Hooray! We found ${imageQuantity} images.`);
+    onUsePagination(imageQuantity);
   }
+
+  renderTemplate(imagesDateHits);
+
+  isFlagForQuantity = false;
+
+  paginContainerRef.classList.add('is-hidden');
 
   if (isFlagCheckScroll === 'scroll-check') {
     observer.observe(sentinelRef);
+  } else if (isFlagCheckScroll === 'pagin-check') {
+    paginContainerRef.classList.remove('is-hidden');
   } else {
     loadMoreBtn.show();
   }
-  renderTemplate(imagesDateHits);
-  isFlagForQuantity = false;
 }
 
 function onLoadMoreBtn() {
@@ -117,13 +129,31 @@ function onPaginationChoices(e) {
 function onEntry([entries]) {
   if (entries.isIntersecting) {
     pageLoadStatusRef.classList.remove('is-hidden');
-
     pixabayApiServis.incrementPage();
     requestToServer();
   }
 }
 
 const observer = new IntersectionObserver(onEntry, {
-  rootMargin: '150px',
+  rootMargin: '100px',
   threshold: 1,
 });
+
+// ================================================
+
+function onUsePagination(quantityImg) {
+  const instance = new Pagination(paginContainerRef, {
+    totalItems: quantityImg,
+    itemsPerPage: 40,
+    visiblePages: 10,
+  });
+
+  instance.on('afterMove', event => {
+    const currentPage = event.page;
+
+    paginContainerRef.classList.add('is-hidden');
+    pixabayApiServis.UsePage(currentPage);
+    clearGalleryInterface();
+    requestToServer();
+  });
+}

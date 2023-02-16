@@ -2,7 +2,7 @@ import axios from 'axios';
 import { key } from '../key/pixabay-key';
 
 export default class PixabayApiServis {
-  constructor(params) {
+  constructor() {
     this.searchQuery = '';
     this.page = 1;
   }
@@ -33,6 +33,10 @@ export default class PixabayApiServis {
 
   incrementPage() {
     this.page += 1;
+  }
+
+  UsePage(go) {
+    this.page = go;
   }
 
   resetPage() {
