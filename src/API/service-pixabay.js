@@ -21,14 +21,10 @@ export default class PixabayApiServis {
       },
     };
 
-    try {
-      const response = await axios.get(BASE_URL, options);
-      const gatherData = await response.data;
+    const response = await axios.get(BASE_URL, options);
+    const gatherData = await response.data;
 
-      return gatherData;
-    } catch (error) {
-      console.error(error.message);
-    }
+    return gatherData;
   }
 
   incrementPage() {

@@ -1,12 +1,14 @@
-import './css/styles.css';
+import Pagination from 'tui-pagination';
+import SimpleLightbox from 'simplelightbox';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 import PixabayApiServis from './API/service-pixabay';
-import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
-
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import galleryTemplateMarkup from './template/gallery-cards.hbs';
 import LoadMoreBtn from './components/load-more-btn';
+
+import './css/styles.css';
+import 'tui-pagination/dist/tui-pagination.css';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const searchFormRef = document.querySelector('#search-form');
 const galleryRef = document.querySelector('.gallery');
@@ -15,9 +17,6 @@ const pageLoadStatusRef = document.querySelector('.page-load-status');
 const endOfContent = document.querySelector('.end-content');
 const paginationChoicesRef = document.querySelector('.pagination-choices');
 const paginContainerRef = document.getElementById('pagination');
-
-import Pagination from 'tui-pagination';
-import 'tui-pagination/dist/tui-pagination.css';
 
 const pixabayApiServis = new PixabayApiServis();
 
@@ -37,9 +36,10 @@ let isFlagCheckScroll;
 
 function onSearchForm(e) {
   e.preventDefault();
-  const { value } = e.target.searchQuery;
+  let { value } = e.target.searchQuery;
+  value = value.trim();
 
-  if (value === '') {
+  if (!value) {
     Notify.info('The search field should not be empty!');
     return;
   }
@@ -61,42 +61,46 @@ function onSearchForm(e) {
 }
 
 async function requestToServer() {
-  const response = await pixabayApiServis.fetchPixabayApi();
-  const imagesDateHits = await response.hits;
-  const imageQuantity = await response.totalHits;
+  try {
+    const response = await pixabayApiServis.fetchPixabayApi();
+    const imagesDateHits = await response.hits;
+    const imageQuantity = await response.totalHits;
+    if (!imageQuantity) {
+      pageLoadStatusRef.classList.add('is-hidden');
+      loadMoreBtn.hide();
 
-  if (!imageQuantity) {
-    pageLoadStatusRef.classList.add('is-hidden');
-    loadMoreBtn.hide();
+      Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+      return;
+    } else if (imagesDateHits.length <= 0) {
+      loadMoreBtn.hide();
+      pageLoadStatusRef.classList.add('is-hidden');
+      endOfContent.classList.remove('is-hidden');
+      return;
+    }
 
-    Notify.failure(
-      'Sorry, there are no images matching your search query. Please try again.'
-    );
-    return;
-  } else if (imagesDateHits.length <= 0) {
-    loadMoreBtn.hide();
-    pageLoadStatusRef.classList.add('is-hidden');
-    endOfContent.classList.remove('is-hidden');
-    return;
-  }
+    if (isFlagForQuantity) {
+      Notify.info(` Hooray! We found ${imageQuantity} images.`);
+      onUsePagination(imageQuantity);
+    }
 
-  if (isFlagForQuantity) {
-    Notify.info(` Hooray! We found ${imageQuantity} images.`);
-    onUsePagination(imageQuantity);
-  }
+    renderTemplate(imagesDateHits);
 
-  renderTemplate(imagesDateHits);
+    isFlagForQuantity = false;
 
-  isFlagForQuantity = false;
+    paginContainerRef.classList.add('is-hidden');
 
-  paginContainerRef.classList.add('is-hidden');
-
-  if (isFlagCheckScroll === 'scroll-check') {
-    observer.observe(sentinelRef);
-  } else if (isFlagCheckScroll === 'pagin-check') {
-    paginContainerRef.classList.remove('is-hidden');
-  } else {
-    loadMoreBtn.show();
+    if (isFlagCheckScroll === 'scroll-check') {
+      observer.observe(sentinelRef);
+    } else if (isFlagCheckScroll === 'pagin-check') {
+      paginContainerRef.classList.remove('is-hidden');
+    } else {
+      loadMoreBtn.show();
+    }
+  } catch (error) {
+    Notify.failure(`Sorry, something went wrong. Try again later`);
+    console.log(error.message);
   }
 }
 
