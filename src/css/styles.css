@@ -11,9 +11,7 @@ body {
   background-color: #fafafa;
   color: #212121;
   line-height: 1.5;
-
 }
-
 
 ul {
   margin: 0;
@@ -37,22 +35,19 @@ p {
   margin: 0;
 }
 
-
 .button {
   display: block;
   margin-left: auto;
   margin-right: auto;
   margin-top: 10px;
   margin-bottom: 10px;
-
-
 }
 
 .button.is-hidden {
   display: none;
 }
 
-.button>.spinner.is-hidden {
+.button > .spinner.is-hidden {
   display: none;
 }
 
@@ -62,14 +57,12 @@ p {
   border-radius: 20px;
   color: #ffffff;
   background-color: #130ccd;
-
 }
 
 .search-input {
   border-radius: 10px;
   padding: 8;
 }
-
 
 .search-fixed {
   position: fixed;
@@ -78,35 +71,30 @@ p {
   left: 0;
 
   z-index: 998;
-
 }
 
 .search-form {
-
   display: flex;
   justify-content: center;
 
   padding-top: 25px;
   padding-bottom: 25px;
   background-color: rgb(64, 75, 95);
-
-
 }
 
 .pagination-choices {
-  display: flex;
+  display: grid;
+
   justify-content: center;
   position: absolute;
   width: 100%;
   right: 0;
   left: 0;
-
 }
 
 .pagination-choices_btn {
-  padding-left: 10px;
-
-
+  /* justify-items: center; */
+  padding-left: 20px;
 }
 
 .box-section {
@@ -118,13 +106,10 @@ p {
 }
 
 .container {
-
   margin-top: 50px;
-  padding-bottom: 25px;
 }
 
 .gallery {
-
   padding: 0;
   margin: 0;
 
@@ -134,19 +119,14 @@ p {
 
   margin-top: -20px;
   margin-left: -20px;
-
 }
 
 .photo-card {
   flex-basis: calc(100% / 4 - 20px);
   margin: 20px 0 0 20px;
 
-
-
   box-shadow: 0 2px 1px -1px #0003, 0 1px 1px #00000024, 0 1px 3px #0000001f;
-
 }
-
 
 .thumb-card {
   height: 250px;
@@ -155,14 +135,12 @@ p {
   border-radius: 4px;
 }
 
-
 .img-card {
   object-fit: cover;
   display: block;
   height: 100%;
   width: 100%;
 }
-
 
 .info {
   display: flex;
@@ -178,16 +156,13 @@ p {
 
   font-size: 16px;
   line-height: 1.87;
-
 }
 
 .quantity {
   display: flex;
   justify-content: center;
   color: rgb(14, 38, 255);
-
 }
-
 
 .loader-ellips {
   font-size: 20px;
@@ -236,7 +211,7 @@ p {
 
 @keyframes slide {
   to {
-    transform: translateX(1.5em)
+    transform: translateX(1.5em);
   }
 }
 
@@ -271,7 +246,6 @@ p {
 
 .end-content.is-hidden {
   display: none;
-
 }
 
 .tui-pagination.is-hidden {
@@ -281,8 +255,7 @@ p {
 .end-content {
   padding-top: 20px;
   padding-bottom: 20px;
-  border-top: 1px solid #DDD;
+  border-top: 1px solid #ddd;
   text-align: center;
   color: #777;
 }
-
